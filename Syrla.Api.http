@@ -1,0 +1,6 @@
+@Syrla.Api_HostAddress = http://localhost:5197
+
+GET {{Syrla.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

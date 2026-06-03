@@ -1,0 +1,57 @@
+# Build
+
+bin/
+obj/
+
+# User-specific
+
+*.user
+*.suo
+
+# Visual Studio
+
+.vs/
+
+# VS Code
+
+.vscode/
+
+# Rider
+
+.idea/
+
+# Logs
+
+*.log
+
+# OS
+
+.DS_Store
+Thumbs.db
+
+# Environment
+
+.env
+.env.*
+
+# Test Results
+
+TestResults/
+
+# Coverage
+
+coverage/
+*.coverage
+
+# Publish
+
+publish/
+
+# Docker
+
+docker-data/
+
+# Temporary
+
+*.tmp
+*.bak
