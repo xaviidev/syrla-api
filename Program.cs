@@ -83,11 +83,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 var app = builder.Build();
 app.UseMiddleware<ExceptionMiddleware>();
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 app.UseAuthentication();
@@ -98,7 +96,25 @@ var summaries = new[]
 {
     "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
 };
+app.MapGet("/", () =>
+{
+    return Results.Ok(new
+    {
+        Application = "Syrla API",
+        Version = "1.0.0",
+        Status = "Online",
+        Environment = app.Environment.EnvironmentName
+    });
+});
 
+app.MapGet("/health", () =>
+{
+    return Results.Ok(new
+    {
+        Status = "Healthy",
+        Timestamp = DateTime.UtcNow
+    });
+});
 app.MapGet("/weatherforecast", () =>
 {
     var forecast =  Enumerable.Range(1, 5).Select(index =>
