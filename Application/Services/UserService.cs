@@ -22,7 +22,8 @@ public class UserService : IUserService
         {
             Id = user.Id,
             Name = user.Name,
-            Email = user.Email
+            Email = user.Email,
+            Role = user.Role
         }).ToList();
     }
 
@@ -34,7 +35,8 @@ public class UserService : IUserService
         {
             Name = dto.Name,
             Email = dto.Email,
-            PasswordHash = passwordHash
+            PasswordHash = passwordHash,
+            Role = "User"
         };
 
         await _repository.AddAsync(user);
@@ -44,7 +46,8 @@ public class UserService : IUserService
         {
             Id = user.Id,
             Name = user.Name,
-            Email = user.Email
+            Email = user.Email,
+            Role = user.Role
         };
     }
 }

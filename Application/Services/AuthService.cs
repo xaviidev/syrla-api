@@ -15,14 +15,13 @@ public class AuthService : IAuthService
     private readonly IConfiguration _configuration;
 
     public AuthService(
-    IUserRepository repository,
-    IConfiguration configuration
-)
-{
-    _repository = repository;
-    _configuration = configuration;
-}
-    
+        IUserRepository repository,
+        IConfiguration configuration
+    )
+    {
+        _repository = repository;
+        _configuration = configuration;
+    }
 
     public async Task<string?> LoginAsync(LoginDto dto)
     {
@@ -30,13 +29,14 @@ public class AuthService : IAuthService
 
         if (user is null)
             return null;
-var passwordValid = BCrypt.Net.BCrypt.Verify(
-    dto.Password,
-    user.PasswordHash
-);
 
-if (!passwordValid)
-    return null;
+        var passwordValid = BCrypt.Net.BCrypt.Verify(
+            dto.Password,
+            user.PasswordHash
+        );
+
+        if (!passwordValid)
+            return null;
 
         var jwtSettings = _configuration
             .GetSection("JwtSettings")
@@ -48,7 +48,8 @@ if (!passwordValid)
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Name, user.Name),
-            new Claim(ClaimTypes.Email, user.Email)
+            new Claim(ClaimTypes.Email, user.Email),
+            new Claim(ClaimTypes.Role, user.Role)
         };
 
         var tokenDescriptor = new SecurityTokenDescriptor
