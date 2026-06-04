@@ -2,11 +2,11 @@
 
 ## Objetivo
 
-Este documento registra problemas encontrados durante o desenvolvimento da Syrla, suas causas e respectivas soluções.
+Este documento registra problemas encontrados durante o desenvolvimento e implantação da Syrla, suas causas e respectivas soluções.
 
 ---
 
-# Build Errors
+# Erros de Build
 
 ## Erro
 
@@ -20,15 +20,15 @@ CS1061
 
 ### Causa
 
-Métodos foram implementados no serviço mas não existiam na interface.
+Métodos foram implementados nos serviços sem atualização da interface correspondente.
 
 ### Solução
 
-Atualizar contratos da interface para refletir a implementação.
+Atualizar os contratos da interface para refletir a implementação.
 
 ---
 
-# Namespace Errors
+# Erros de Namespace
 
 ## Erro
 
@@ -42,11 +42,11 @@ The type or namespace name could not be found
 
 ### Causa
 
-Arquivos movidos para novas pastas sem atualização dos namespaces.
+Arquivos movidos entre pastas sem atualização dos namespaces.
 
 ### Solução
 
-Revisar namespace e referências utilizando:
+Revisar namespaces e referências utilizando:
 
 ```bash
 grep -R "NamespaceAntigo" .
@@ -54,23 +54,27 @@ grep -R "NamespaceAntigo" .
 
 ---
 
-# Migration Errors
+# Erros de Migration
 
-## Erro
+## Problema
 
-AppDbContext não encontrado
+AppDbContext não encontrado.
 
 ### Causa
 
-Refatoração da estrutura sem atualização dos arquivos de migration.
+Refatoração da estrutura sem atualização das migrations.
 
 ### Solução
 
-Corrigir namespaces e validar referências do DbContext.
+Validar:
+
+* Namespaces
+* Referências
+* Configuração do DbContext
 
 ---
 
-# UserService Errors
+# Erros no UserService
 
 ## Erro
 
@@ -84,7 +88,7 @@ The modifier 'public' is not valid for this item
 
 ### Causa
 
-Métodos colados fora da classe UserService.
+Métodos adicionados fora da classe UserService.
 
 ### Solução
 
@@ -92,19 +96,19 @@ Reconstruir a estrutura correta da classe.
 
 ---
 
-# JWT Errors
+# Problemas com JWT
 
 ## Problema
 
-JwtSettings localizado em pasta incorreta.
+JwtSettings localizado em diretório incorreto.
 
-### Estrutura antiga
+### Estrutura Antiga
 
 ```txt
 Auth/JwtSettings.cs
 ```
 
-### Estrutura correta
+### Estrutura Correta
 
 ```txt
 Infrastructure/Authentication/JwtSettings.cs
@@ -112,11 +116,11 @@ Infrastructure/Authentication/JwtSettings.cs
 
 ### Solução
 
-Mover arquivo e atualizar namespace.
+Mover o arquivo e atualizar os namespaces.
 
 ---
 
-# Test Errors
+# Problemas em Testes Unitários
 
 ## Problema
 
@@ -124,7 +128,17 @@ ReturnsAsync incompatível.
 
 ### Causa
 
-SaveChangesAsync retornava Task e não Task<int>.
+SaveChangesAsync retornava:
+
+```csharp
+Task
+```
+
+e não:
+
+```csharp
+Task<int>
+```
 
 ### Solução
 
@@ -142,6 +156,229 @@ Returns(Task.CompletedTask)
 
 ---
 
+# Problemas de Git
+
+## Problema
+
+Projeto sem repositório Git configurado.
+
+### Sintoma
+
+```bash
+git status
+```
+
+retornava:
+
+```txt
+fatal: not a git repository
+```
+
+### Solução
+
+Inicializar o repositório:
+
+```bash
+git init
+git add .
+git commit -m "initial commit"
+```
+
+---
+
+# Problemas de Autenticação GitHub
+
+## Problema
+
+Falha no push utilizando usuário e senha.
+
+### Mensagem
+
+```txt
+Password authentication is not supported for Git operations
+```
+
+### Solução
+
+Utilizar GitHub CLI:
+
+```bash
+gh auth login
+```
+
+Após autenticação:
+
+```bash
+git push -u origin main
+```
+
+---
+
+# Problemas com Oracle Cloud
+
+## Problema
+
+Falha ao criar instância Always Free.
+
+### Mensagem
+
+```txt
+Insufficient capacity for VM.Standard.A1.Flex
+```
+
+### Causa
+
+Ausência de recursos disponíveis na região selecionada.
+
+### Solução
+
+Adotar temporariamente:
+
+```txt
+Render + Railway
+```
+
+como infraestrutura principal.
+
+---
+
+# Problemas de Deploy no Render
+
+## Problema
+
+Aplicação publicada mas Swagger indisponível.
+
+### Sintoma
+
+```txt
+HTTP 404
+```
+
+ao acessar:
+
+```txt
+/swagger
+```
+
+### Causa
+
+Swagger habilitado apenas em ambiente Development.
+
+### Solução
+
+Habilitar Swagger também em produção.
+
+---
+
+# Problemas de Banco de Dados
+
+## Problema
+
+Erro 500 durante login.
+
+### Causa
+
+Banco de dados em produção não possuía tabelas criadas.
+
+### Solução
+
+Executar migrations:
+
+```bash
+dotnet ef database update
+```
+
+---
+
+# Problema
+
+Login retornando:
+
+```txt
+Credenciais inválidas
+```
+
+### Causa
+
+Tabela Users vazia.
+
+### Solução
+
+Cadastrar usuário inicial através do endpoint:
+
+```http
+POST /api/User
+```
+
+---
+
+# Problemas de Connection String
+
+## Problema
+
+Falha ao carregar appsettings.json
+
+### Causa
+
+Quebra de linha inserida dentro da senha da connection string.
+
+### Exemplo incorreto
+
+```json
+"password=senha
+
+"
+```
+
+### Solução
+
+Manter a string de conexão em uma única linha.
+
+---
+
+# Problemas de Railway
+
+## Problema
+
+Banco aparentemente conectado mas sem dados.
+
+### Diagnóstico
+
+Verificar:
+
+```sql
+SHOW TABLES;
+```
+
+### Solução
+
+Executar migrations e validar criação das tabelas:
+
+```txt
+Users
+__EFMigrationsHistory
+```
+
+---
+
+# Problemas de Health Check
+
+## Problema
+
+Endpoint não encontrado.
+
+### Solução
+
+Validar configuração do endpoint:
+
+```http
+GET /health
+```
+
+e confirmar publicação da versão correta no Render.
+
+---
+
 # Boas Práticas
 
 ## Sempre executar
@@ -150,7 +387,7 @@ Returns(Task.CompletedTask)
 dotnet build
 ```
 
-após qualquer alteração estrutural.
+após alterações estruturais.
 
 ---
 
@@ -164,11 +401,24 @@ antes de commits importantes.
 
 ---
 
-## Nunca
+## Sempre validar
 
-* Mover múltiplas camadas simultaneamente.
-* Refatorar sem validar build.
-* Alterar namespaces sem revisão.
+```bash
+git status
+```
+
+antes de commits e deploys.
+
+---
+
+## Sempre revisar
+
+* Variáveis de ambiente
+* Connection Strings
+* Configuração JWT
+* Logs do Render
+
+antes de investigar erros mais complexos.
 
 ---
 
@@ -180,11 +430,15 @@ Verificar estrutura:
 find . -maxdepth 3 -type d | sort
 ```
 
+---
+
 Verificar referências:
 
 ```bash
 grep -R "NomeClasse" .
 ```
+
+---
 
 Executar build:
 
@@ -192,8 +446,37 @@ Executar build:
 dotnet build
 ```
 
+---
+
 Executar testes:
 
 ```bash
 dotnet test
+```
+
+---
+
+Executar migrations:
+
+```bash
+dotnet ef database update
+```
+
+---
+
+Verificar tabelas:
+
+```sql
+SHOW TABLES;
+```
+
+---
+
+# Status Atual
+
+```txt
+Fase 1 ✅
+Fase 2 ✅
+Fase 3 ✅
+Fase 4 🚀
 ```

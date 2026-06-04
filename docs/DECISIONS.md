@@ -1,8 +1,8 @@
-# Syrla - Architectural Decision Records (ADR)
+# Syrla - Registro de Decisões Arquiteturais (ADR)
 
 ## Objetivo
 
-Registrar decisões arquiteturais tomadas durante a evolução da plataforma Syrla.
+Registrar as principais decisões arquiteturais tomadas durante a evolução da plataforma Syrla.
 
 ---
 
@@ -12,11 +12,11 @@ Registrar decisões arquiteturais tomadas durante a evolução da plataforma Syr
 
 ### Decisão
 
-Adotar Clean Architecture como padrão estrutural.
+Adotar Clean Architecture como padrão estrutural da aplicação.
 
 ### Motivo
 
-Separar responsabilidades e reduzir acoplamento.
+Separar responsabilidades e reduzir acoplamento entre as camadas.
 
 ### Benefícios
 
@@ -27,7 +27,7 @@ Separar responsabilidades e reduzir acoplamento.
 
 ### Status
 
-Aprovado
+Aprovado ✅
 
 ---
 
@@ -51,7 +51,7 @@ Evitar dependência direta do Entity Framework nas camadas superiores.
 
 ### Status
 
-Aprovado
+Aprovado ✅
 
 ---
 
@@ -75,7 +75,7 @@ Separar domínio dos contratos externos.
 
 ### Status
 
-Aprovado
+Aprovado ✅
 
 ---
 
@@ -98,13 +98,13 @@ Nunca armazenar senhas em texto puro.
 
 ### Status
 
-Aprovado
+Aprovado ✅
 
 ---
 
 # ADR-005
 
-## JWT
+## JWT Authentication
 
 ### Decisão
 
@@ -112,7 +112,7 @@ Utilizar JWT para autenticação.
 
 ### Motivo
 
-Arquitetura stateless e compatível com APIs modernas.
+Arquitetura stateless compatível com APIs modernas.
 
 ### Benefícios
 
@@ -122,82 +122,182 @@ Arquitetura stateless e compatível com APIs modernas.
 
 ### Status
 
-Aprovado
+Aprovado ✅
 
 ---
 
 # ADR-006
 
-## Oracle Cloud
-
-### Decisão
-
-Utilizar Oracle Cloud Free Tier como infraestrutura inicial.
-
-### Motivo
-
-Excelente relação custo-benefício para fase inicial do projeto.
-
-### Benefícios
-
-* VPS gratuita
-* Recursos robustos
-* Ambiente Linux completo
-
-### Status
-
-Planejado
-
----
-
-# ADR-007
-
 ## Docker
 
 ### Decisão
 
-Containerizar toda a plataforma.
+Containerizar a aplicação utilizando Docker.
 
 ### Motivo
 
-Padronizar ambientes.
+Padronizar ambientes de desenvolvimento e produção.
 
 ### Benefícios
 
 * Deploy simplificado
 * Reprodutibilidade
 * Escalabilidade
+* Facilidade de manutenção
 
 ### Status
 
-Planejado
+Implementado ✅
+
+---
+
+# ADR-007
+
+## GitHub como Repositório Principal
+
+### Decisão
+
+Centralizar o código-fonte no GitHub.
+
+### Motivo
+
+Garantir versionamento e integração contínua.
+
+### Benefícios
+
+* Histórico de alterações
+* Colaboração futura
+* Integração com Render
+
+### Status
+
+Implementado ✅
 
 ---
 
 # ADR-008
 
-## Redis
+## Render para Hospedagem da API
 
 ### Decisão
 
-Adicionar Redis na Fase 4.
+Utilizar Render como plataforma principal de hospedagem.
 
 ### Motivo
 
-Melhorar performance e cache.
+A tentativa inicial utilizando Oracle Cloud encontrou limitações de capacidade na região disponível.
 
 ### Benefícios
 
-* Redução de consultas
-* Menor carga no banco
+* Deploy automatizado
+* Integração nativa com GitHub
+* Facilidade de configuração
+* Ambiente gratuito para validação do projeto
 
 ### Status
 
-Planejado
+Implementado ✅
 
 ---
 
 # ADR-009
+
+## Railway para Banco de Dados
+
+### Decisão
+
+Utilizar Railway para hospedagem do banco MySQL.
+
+### Motivo
+
+Eliminar dependência de banco local e permitir persistência em produção.
+
+### Benefícios
+
+* Banco em nuvem
+* Persistência de dados
+* Integração simples com Entity Framework
+* Gerenciamento simplificado
+
+### Status
+
+Implementado ✅
+
+---
+
+# ADR-010
+
+## Entity Framework Migrations
+
+### Decisão
+
+Controlar a evolução do banco através de migrations.
+
+### Motivo
+
+Garantir versionamento do esquema de dados.
+
+### Benefícios
+
+* Rastreabilidade
+* Padronização
+* Facilidade de implantação
+
+### Status
+
+Implementado ✅
+
+---
+
+# ADR-011
+
+## Variáveis de Ambiente
+
+### Decisão
+
+Centralizar configurações sensíveis em variáveis de ambiente.
+
+### Motivo
+
+Evitar exposição de credenciais no código-fonte.
+
+### Benefícios
+
+* Segurança
+* Facilidade de manutenção
+* Adequação para produção
+
+### Status
+
+Implementado ✅
+
+---
+
+# ADR-012
+
+## Redis
+
+### Decisão
+
+Adicionar Redis para cache e otimização de desempenho.
+
+### Motivo
+
+Reduzir carga no banco de dados e melhorar tempo de resposta.
+
+### Benefícios
+
+* Cache distribuído
+* Melhor performance
+* Escalabilidade
+
+### Status
+
+Planejado 🚀
+
+---
+
+# ADR-013
 
 ## RabbitMQ
 
@@ -217,13 +317,37 @@ Preparar a plataforma para processamento distribuído.
 
 ### Status
 
-Planejado
+Planejado 🚀
 
 ---
 
-# ADR-010
+# ADR-014
 
-## Agentes IA
+## Roles e Autorização
+
+### Decisão
+
+Implementar perfis de acesso e autorização baseada em roles.
+
+### Motivo
+
+Permitir controle granular de permissões.
+
+### Benefícios
+
+* Segurança
+* Governança
+* Escalabilidade organizacional
+
+### Status
+
+Planejado 🚀
+
+---
+
+# ADR-015
+
+## Agentes Inteligentes
 
 ### Decisão
 
@@ -241,4 +365,42 @@ Centralizar automação, conhecimento e tomada de decisão.
 
 ### Status
 
-Planejado
+Planejado 🚀
+
+---
+
+# Histórico de Infraestrutura
+
+## Oracle Cloud
+
+Foi realizada tentativa inicial de implantação utilizando:
+
+* Ubuntu 24.04
+* VM.Standard.A1.Flex
+* 4 OCPU
+* 24 GB RAM
+
+Resultado:
+
+```txt id="y5wwgs"
+Capacidade insuficiente na região selecionada.
+```
+
+Decisão final:
+
+```txt id="k9qj8w"
+Render + Railway
+```
+
+Essa arquitetura tornou-se a base oficial da infraestrutura da Syrla.
+
+---
+
+# Status Atual
+
+```txt id="2ymr93"
+Fase 1 ✅
+Fase 2 ✅
+Fase 3 ✅
+Fase 4 🚀
+```

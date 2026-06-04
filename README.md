@@ -1,12 +1,12 @@
 # 🚀 Syrla
 
-Plataforma de Inteligência Artificial, Automação e Gestão de Conhecimento construída com ASP.NET Core.
+Plataforma de Inteligência Artificial, Automação e Gestão de Conhecimento construída com ASP.NET Core 8.
 
 ---
 
-## 📖 Sobre o Projeto
+# 📖 Sobre o Projeto
 
-A Syrla nasceu com o objetivo de ser uma plataforma capaz de centralizar conhecimento, automação de processos, autenticação, gestão de usuários e futuramente agentes inteligentes especializados.
+A Syrla nasceu com o objetivo de centralizar conhecimento, automação de processos, autenticação, gestão de usuários e futuramente agentes inteligentes especializados.
 
 O projeto está sendo desenvolvido seguindo princípios de:
 
@@ -19,9 +19,45 @@ O projeto está sendo desenvolvido seguindo princípios de:
 
 ---
 
-## 🏗️ Arquitetura
+# 🌐 Ambiente de Produção
+
+API publicada e disponível em:
+
+```txt
+https://syrla-api.onrender.com
+```
+
+Swagger:
+
+```txt
+https://syrla-api.onrender.com/swagger
+```
+
+Health Check:
+
+```txt
+https://syrla-api.onrender.com/health
+```
+
+---
+
+# 🏗️ Arquitetura
 
 Estrutura atual:
+
+```txt
+Cliente
+   ↓
+Render
+   ↓
+Docker
+   ↓
+ASP.NET Core 8
+   ↓
+Railway MySQL
+```
+
+Arquitetura interna:
 
 ```txt
 API
@@ -41,7 +77,7 @@ docs/ARCHITECTURE.md
 
 ---
 
-## 🔐 Segurança
+# 🔐 Segurança
 
 Atualmente a plataforma utiliza:
 
@@ -49,10 +85,12 @@ Atualmente a plataforma utiliza:
 * BCrypt Password Hashing
 * Middleware Global de Exceções
 * DTOs para proteção de contratos
+* Variáveis de Ambiente
+* Entity Framework Core
 
 ---
 
-## 🧪 Qualidade
+# 🧪 Qualidade
 
 Ferramentas implementadas:
 
@@ -67,7 +105,7 @@ Testes implementados:
 
 ---
 
-## 🗂️ Estrutura do Projeto
+# 🗂️ Estrutura do Projeto
 
 ```txt
 Syrla.Api
@@ -77,14 +115,12 @@ Syrla.Api
 │   └── Middlewares
 │
 ├── Application
-│   ├── Common
 │   ├── DTOs
 │   ├── Interfaces
 │   └── Services
 │
 ├── Domain
-│   ├── Entities
-│   └── Interfaces
+│   └── Entities
 │
 ├── Infrastructure
 │   ├── Authentication
@@ -98,48 +134,87 @@ Syrla.Api
 
 ---
 
-## 📚 Documentação
+# ☁️ Infraestrutura
 
-### Arquitetura
+## Render
+
+Responsável por:
+
+* Hospedagem da API
+* Deploy Automático
+* Logs
+* Ambiente de Produção
+
+## Railway
+
+Responsável por:
+
+* Banco MySQL
+* Persistência de Dados
+* Rede Privada
+* Variáveis de Ambiente
+
+## GitHub
+
+Responsável por:
+
+* Versionamento
+* Controle de Código
+* Integração Contínua
+
+---
+
+# 📚 Documentação
+
+## Arquitetura
 
 ```txt
 docs/ARCHITECTURE.md
 ```
 
-### Histórico
-
-```txt
-docs/PHASE_01.md
-docs/PHASE_02.md
-```
-
-### Troubleshooting
-
-```txt
-docs/TROUBLESHOOTING.md
-```
-
-### Decisões Arquiteturais
-
-```txt
-docs/DECISIONS.md
-```
-
-### Roadmap
+## Roadmap
 
 ```txt
 docs/ROADMAP.md
 ```
 
+## Histórico das Fases
+
+```txt
+docs/PHASE_01.md
+docs/PHASE_02.md
+docs/PHASE_03.md
+```
+
+## Deploy
+
+```txt
+docs/DEPLOYMENT.md
+```
+
+## Decisões Arquiteturais
+
+```txt
+docs/DECISIONS.md
+```
+
+## Troubleshooting
+
+```txt
+docs/TROUBLESHOOTING.md
+```
+
 ---
 
-## 🚀 Status do Projeto
+# 🚀 Status Atual
 
-### Fase 1
+## Fase 1
 
 ✅ Concluída
 
-* API ASP.NET Core
+Entregas:
+
+* ASP.NET Core 8
 * Entity Framework Core
 * MySQL
 * JWT
@@ -147,9 +222,11 @@ docs/ROADMAP.md
 
 ---
 
-### Fase 2
+## Fase 2
 
 ✅ Concluída
+
+Entregas:
 
 * Clean Architecture
 * Repository Pattern
@@ -160,38 +237,70 @@ docs/ROADMAP.md
 
 ---
 
-### Fase 3
+## Fase 3
 
-🔄 Planejada
+✅ Concluída
 
-* Oracle Cloud
-* Docker Compose
-* Nginx
-* SSL
-* Deploy
+Entregas:
+
+* Docker
+* GitHub
+* Render
+* Railway
+* Deploy em Produção
+* Swagger
+* Health Check
+* CI/CD
 
 ---
 
-## 🛣️ Roadmap
+## Fase 4
 
-Próximas evoluções:
+🚀 Em Planejamento
 
+Objetivos:
+
+* Authorization
+* Claims
+* Roles
+* Endpoint /me
+* Segurança Avançada
+
+---
+
+# 🛣️ Próximas Evoluções
+
+* Roles
+* Policies
+* Refresh Tokens
 * Redis
 * RabbitMQ
-* Observabilidade
 * Auditoria
-* Roles e Policies
-* Refresh Tokens
+* Observabilidade
 * Agentes Inteligentes
 
 ---
 
-## 👨‍💻 Equipe
+# 👨‍💻 Desenvolvimento
 
 Projeto idealizado e desenvolvido por Xavii.
 
 ---
 
-## 📄 Licença
+# 📄 Licença
 
 Em definição.
+
+---
+
+# 📌 Versão Atual
+
+```txt
+v0.1.0
+```
+
+Status:
+
+```txt
+Produção Ativa ✅
+```

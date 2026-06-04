@@ -1,207 +1,288 @@
-# PHASE 03 - INFRASTRUCTURE AND DEPLOY
+# FASE 03 - INFRAESTRUTURA E DEPLOY
 
 ## Status
 
-In Progress
+Concluída ✅
 
 ---
 
-## Objective
+## Objetivo
 
-Prepare Syrla for production environments through infrastructure, containerization, deployment automation, monitoring, and cloud services integration.
+Preparar a Syrla para execução em ambiente de produção através de containerização, deploy automatizado, banco de dados em nuvem e integração contínua.
 
 ---
 
-# Phase 3 Roadmap
+# Resumo da Fase
 
-## Stage 1 - Docker and Cloud Deployment
+A Fase 03 marcou a transição da Syrla de um ambiente exclusivamente local para uma arquitetura baseada em serviços de nuvem.
 
-### Objectives
+Ao final desta fase, a API passou a operar em produção com deploy automatizado, banco de dados remoto e integração contínua baseada em GitHub.
 
-* Containerize the application
-* Publish the API to the internet
-* Configure automated deployment
-* Validate production execution
+---
 
-### Deliverables
+# Etapa 1 - Docker e Deploy
 
-#### Docker
+## Objetivos
 
-* Dockerfile created
-* Multi-stage build configured
-* ASP.NET Core 8 containerized
+* Containerizar a aplicação
+* Publicar a API na internet
+* Automatizar o processo de deploy
+* Validar a execução em ambiente de produção
 
-#### GitHub
+---
 
-* Repository published
-* Version control configured
-* Main branch established
+## Entregas
 
-Repository:
+### Docker
 
+* Dockerfile criado
+* Build multi-stage configurado
+* ASP.NET Core 8 containerizado
+
+### GitHub
+
+* Repositório publicado
+* Controle de versão configurado
+* Branch principal definida
+
+Repositório:
+
+```txt
 https://github.com/xaviidev/syrla-api
+```
 
-#### Render
+### Render
 
-* Render account configured
-* GitHub integration enabled
-* Automatic deployment configured
+* Integração com GitHub
+* Deploy automático configurado
+* Ambiente de produção criado
+* Logs de produção disponíveis
 
-#### Production Environment
+### Ambiente de Produção
 
-Public URL available
+URL pública disponível:
 
-Endpoints validated:
+```txt
+https://syrla-api.onrender.com
+```
 
+Endpoints validados:
+
+```txt
 GET /
-
 GET /health
-
 GET /weatherforecast
+```
 
-Swagger enabled in production:
+Swagger habilitado em produção:
 
+```txt
 /swagger
-
-#### Health Check
-
-Endpoint created:
-
-GET /health
-
-Purpose:
-
-* Infrastructure validation
-* Availability monitoring
-* Future integration with monitoring tools
+```
 
 ---
 
-## Stage 1 Result
+## Resultado da Etapa 1
 
-Status: Completed
+Status:
 
-Deployment successful.
+```txt
+Concluída ✅
+```
 
-Application running in production environment.
+A aplicação foi publicada com sucesso e ficou acessível pela internet.
 
 ---
 
-# Current Architecture
+# Etapa 2 - Banco de Dados em Nuvem
 
-Client
-↓
+## Objetivos
+
+Eliminar a dependência de banco de dados local e permitir persistência de dados em ambiente de produção.
+
+---
+
+## Plataforma Escolhida
+
+### Railway
+
+Serviços utilizados:
+
+* MySQL 9
+* Volume persistente
+* Rede privada
+* Credenciais gerenciadas por variáveis de ambiente
+
+---
+
+## Integração
+
+Configuração realizada através de:
+
+```txt
+ConnectionStrings__DefaultConnection
+```
+
+Banco utilizado:
+
+```txt
+railway
+```
+
+---
+
+## Migrações
+
+Migrações executadas com sucesso utilizando Entity Framework Core.
+
+Tabelas criadas:
+
+```txt
+Users
+__EFMigrationsHistory
+```
+
+---
+
+## Resultado da Etapa 2
+
+Status:
+
+```txt
+Concluída ✅
+```
+
+Banco de dados remoto funcionando corretamente.
+
+---
+
+# Arquitetura Atual
+
+```txt
+Cliente
+   ↓
 Render
-↓
-Docker Container
-↓
-ASP.NET Core 8 API
+   ↓
+Container Docker
+   ↓
+ASP.NET Core 8
+   ↓
+Railway MySQL
+```
 
 ---
 
-# Lessons Learned
+# Desafios Encontrados
 
 ## Oracle Cloud
 
-Attempted deployment using:
+Foi realizada tentativa de implantação utilizando:
 
 * VM.Standard.A1.Flex
 * Ubuntu 24.04
 * 4 OCPU
 * 24 GB RAM
 
-Issue encountered:
+Problema encontrado:
 
-Insufficient capacity in São Paulo region for Always Free resources.
+```txt
+Capacidade insuficiente para a forma VM.Standard.A1.Flex
+```
 
-Decision:
-
-Temporary adoption of Render for cloud deployment.
-
-Future possibility:
-
-* Oracle Cloud
-* AWS
-* DigitalOcean
+A região selecionada não possuía recursos Always Free disponíveis.
 
 ---
 
-# Next Stage
+## Decisão Arquitetural
 
-## Stage 2 - Cloud Database
+Para acelerar o desenvolvimento e evitar bloqueios de infraestrutura, foi adotada a seguinte solução:
 
-### Objectives
+```txt
+Render + Railway
+```
 
-Remove dependency on local infrastructure.
-
-Current state:
-
-server=localhost;port=3307
-
-Target state:
-
-Managed cloud database.
-
-Options under evaluation:
-
-* Railway MySQL
-* Aiven MySQL
-* PlanetScale
-* AWS RDS
-* Oracle MySQL
-
-### Expected Deliverables
-
-* Cloud database
-* Environment variables
-* Secure secret management
-* Production-ready configuration
+Essa decisão permitiu concluir a implantação da API sem custos iniciais.
 
 ---
 
-# Deployment Checklist
+# Funcionalidades Validadas
 
-## Completed
+## API
+
+* Inicialização em produção
+* Endpoints públicos
+* Swagger
+* Health Check
+
+## Banco de Dados
+
+* Conexão remota
+* Entity Framework
+* Migrações
+* Persistência de dados
+
+## Segurança
+
+* JWT Authentication
+* BCrypt Password Hash
+* Variáveis de ambiente
+
+## Deploy
+
+* GitHub
+* Docker
+* Render
+* CI/CD automático
+
+---
+
+# Lições Aprendidas
+
+* Deploy com Docker em ambiente de produção
+* Configuração de variáveis de ambiente
+* Integração Render + GitHub
+* Integração Railway + MySQL
+* Migrações com Entity Framework
+* Resolução de problemas de conexão remota
+* Gerenciamento de infraestrutura em nuvem
+
+---
+
+# Checklist Final
+
+## Concluído
 
 * Dockerfile
 * GitHub Repository
 * Render Deployment
-* Health Check
-* Swagger Production
-* CI/CD via Git Push
-
-## Pending
-
-* Cloud Database
+* Railway MySQL
 * Environment Variables
-* JWT Secret Management
-* Custom Domain
-* HTTPS Validation
-* Monitoring
-* Logging
+* Entity Framework Migrations
+* Health Check
+* Swagger em Produção
+* CI/CD Automático
+* Persistência de Dados
 
 ---
 
-# Version History
+# Resultado Final
 
-## v0.1.0
+Versão:
 
-Completed:
+```txt
+v0.1.0
+```
 
-* Phase 1
-* Phase 2
-* Initial deployment
+Fases concluídas:
 
-Date:
+```txt
+Fase 1 ✅
+Fase 2 ✅
+Fase 3 ✅
+```
 
-June 2026
+Próxima etapa:
 
----
-
-## v0.2.0
-
-In Progress
-
-Focus:
-
-Infrastructure and Cloud Services
+```txt
+Fase 4 - Autorização e Segurança
+```

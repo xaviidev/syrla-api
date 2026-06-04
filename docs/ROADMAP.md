@@ -2,7 +2,7 @@
 
 ## Visão Geral
 
-Este documento descreve a evolução planejada da plataforma Syrla após a conclusão das Fases 1 e 2.
+Este documento descreve a evolução planejada da plataforma Syrla.
 
 Status Atual:
 
@@ -12,6 +12,61 @@ Fase 1
 
 Fase 2
 ✅ Concluída
+
+Fase 3
+✅ Concluída
+
+Fase 4
+🚀 Em Planejamento
+```
+
+---
+
+# Fase 1 - Fundação da Plataforma
+
+## Objetivo
+
+Construir a base da API Syrla.
+
+### Entregas
+
+* ASP.NET Core 8
+* Entity Framework Core
+* MySQL
+* JWT Authentication
+* BCrypt
+* Controllers
+* DTOs
+* Repository Pattern
+
+Status:
+
+```txt
+Concluída ✅
+```
+
+---
+
+# Fase 2 - Arquitetura e Organização
+
+## Objetivo
+
+Estruturar a aplicação seguindo boas práticas de desenvolvimento.
+
+### Entregas
+
+* Clean Architecture
+* Separação por camadas
+* Repository Pattern
+* Services
+* Middleware Global de Exceções
+* Testes Unitários
+* Documentação Técnica
+
+Status:
+
+```txt
+Concluída ✅
 ```
 
 ---
@@ -20,84 +75,111 @@ Fase 2
 
 ## Objetivo
 
-Preparar a Syrla para execução em ambiente de produção.
-
----
-
-## Oracle Cloud
+Publicar a Syrla em ambiente de produção e torná-la independente da infraestrutura local.
 
 ### Entregas
 
-* Criação da VPS
-* Ubuntu Server
-* Configuração de rede
-* Hardening básico
+#### GitHub
+
+* Repositório versionado
+* Controle de versão
+* Fluxo de desenvolvimento
+
+#### Docker
+
+* Dockerfile configurado
+* Build automatizado
+* Publicação da aplicação
+
+#### Render
+
+* Deploy automático
+* Ambiente de produção
+* Health Check
+* Swagger público
+
+#### Railway
+
+* Banco MySQL em nuvem
+* Persistência de dados
+* Integração com Entity Framework
+
+#### Produção
+
+* Cadastro de usuários
+* Autenticação JWT
+* Banco em nuvem
+* API acessível pela internet
 
 Status:
 
 ```txt
-Planejado
+Concluída ✅
 ```
 
 ---
 
-## Docker
+# Fase 4 - Autorização e Segurança
 
-### Entregas
+## Objetivo
 
-* Dockerfile otimizado
-* Docker Compose
-* Containers separados
+Fortalecer os mecanismos de autenticação e autorização.
 
-Estrutura prevista:
+### Entregas Planejadas
+
+#### Usuário Autenticado
+
+Endpoint:
 
 ```txt
-API
-MySQL
-Redis
-RabbitMQ
-Nginx
+GET /api/Auth/me
+```
+
+#### Rotas Protegidas
+
+Uso de:
+
+```txt
+[Authorize]
+```
+
+#### Claims
+
+Armazenar no JWT:
+
+* Id
+* Nome
+* Email
+* Role
+
+#### Roles
+
+Perfis iniciais:
+
+* User
+* Admin
+
+#### Segurança
+
+* Melhor gerenciamento de segredos
+* Variáveis de ambiente
+* Políticas de autorização
+
+Status:
+
+```txt
+Planejada 🚀
 ```
 
 ---
 
-## Nginx
-
-### Entregas
-
-* Reverse Proxy
-* SSL
-* Compressão
-* Headers de segurança
-
----
-
-## SSL
-
-### Entregas
-
-* Certificados
-* HTTPS obrigatório
-* Renovação automática
-
----
-
-## Observabilidade Inicial
-
-### Entregas
-
-* Logs estruturados
-* Monitoramento básico
-
----
-
-# Fase 4 - Escalabilidade
+# Fase 5 - Escalabilidade
 
 ## Redis
 
 Objetivo:
 
-Cache e gerenciamento de sessões.
+Cache e otimização de performance.
 
 ---
 
@@ -110,7 +192,7 @@ Mensageria assíncrona.
 Casos futuros:
 
 * Processamento de IA
-* Filas de integração
+* Integrações
 * Notificações
 
 ---
@@ -123,25 +205,27 @@ Execução de tarefas agendadas.
 
 ---
 
-## Health Checks
+## Health Checks Avançados
 
 Objetivo:
 
-Monitoramento dos serviços.
+Monitorar API, banco e serviços externos.
+
+Status:
+
+```txt
+Planejada
+```
 
 ---
 
-# Fase 5 - Segurança Avançada
+# Fase 6 - Segurança Corporativa
 
-## Roles
+## Refresh Tokens
 
-Perfis de acesso.
+Objetivo:
 
-Exemplos:
-
-* Admin
-* User
-* Operator
+Melhorar a experiência de autenticação.
 
 ---
 
@@ -151,31 +235,35 @@ Autorização baseada em regras.
 
 ---
 
-## Refresh Tokens
-
-Objetivo:
-
-Melhorar experiência de autenticação.
-
----
-
 ## Auditoria
 
 Registro de:
 
 * Logins
 * Alterações
-* Ações críticas
+* Operações críticas
 
 ---
 
-# Fase 6 - Ecossistema de IA
+## Logs Estruturados
+
+Implementação de:
+
+* Serilog
+* Rastreamento de erros
+* Observabilidade
+
+Status:
+
+```txt
+Planejada
+```
+
+---
+
+# Fase 7 - Ecossistema de IA
 
 ## Agentes Inteligentes
-
-Objetivo:
-
-Criar agentes especializados.
 
 Exemplos:
 
@@ -190,15 +278,15 @@ Exemplos:
 
 Objetivo:
 
-Permitir retenção contextual.
+Retenção de contexto e conhecimento.
 
 ---
 
-## Knowledge Base
+## Base de Conhecimento
 
 Objetivo:
 
-Centralizar conhecimento da organização.
+Centralização de informações organizacionais.
 
 ---
 
@@ -210,9 +298,15 @@ Possíveis integrações:
 * Anthropic
 * Modelos Open Source
 
+Status:
+
+```txt
+Planejada
+```
+
 ---
 
-# Fase 7 - Plataforma Syrla
+# Fase 8 - Plataforma Syrla
 
 ## Painel Administrativo
 
@@ -228,7 +322,7 @@ Controle avançado de contas.
 
 ## Dashboard
 
-Métricas e monitoramento.
+Métricas operacionais e estratégicas.
 
 ---
 
@@ -236,26 +330,32 @@ Métricas e monitoramento.
 
 Suporte a múltiplas organizações.
 
+Status:
+
+```txt
+Planejada
+```
+
 ---
 
 # Critérios de Conclusão
 
-## Fase 3
-
-Infraestrutura pronta para produção.
-
 ## Fase 4
 
-Aplicação escalável.
+Autorização e segurança implementadas.
 
 ## Fase 5
 
-Segurança corporativa.
+Aplicação escalável.
 
 ## Fase 6
 
-Agentes IA operacionais.
+Segurança corporativa consolidada.
 
 ## Fase 7
 
-Plataforma completa.
+Ecossistema de IA operacional.
+
+## Fase 8
+
+Plataforma Syrla completa.

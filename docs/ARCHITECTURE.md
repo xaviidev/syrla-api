@@ -2,7 +2,7 @@
 
 ## Visão Geral
 
-A Syrla é uma plataforma de Inteligência Artificial e automação construída utilizando ASP.NET Core 8, seguindo princípios de Clean Architecture, SOLID, Dependency Injection e Separation of Concerns.
+A Syrla é uma plataforma de Inteligência Artificial, automação e gestão de conhecimento construída utilizando ASP.NET Core 8, seguindo princípios de Clean Architecture, SOLID, Dependency Injection e Separation of Concerns.
 
 O objetivo da arquitetura é garantir:
 
@@ -15,9 +15,15 @@ O objetivo da arquitetura é garantir:
 
 ---
 
-# Estrutura Geral
+# Arquitetura Geral da Plataforma
 
 ```txt
+Cliente
+↓
+Render
+↓
+Docker
+↓
 API
 ↓
 Application
@@ -25,6 +31,8 @@ Application
 Domain
 ↓
 Infrastructure
+↓
+Railway MySQL
 ```
 
 Cada camada possui responsabilidades específicas e não deve assumir responsabilidades de outras camadas.
@@ -356,7 +364,7 @@ Utilizado para abstrair acesso a dados.
 Benefícios:
 
 * Menor dependência do banco
-* Facilidade de substituição de persistência
+* Facilidade de substituição da persistência
 
 ---
 
@@ -441,7 +449,6 @@ Syrla.Api
 │
 ├── Domain
 │   ├── Entities
-│   └── Interfaces
 │
 ├── Infrastructure
 │   ├── Authentication
@@ -450,6 +457,7 @@ Syrla.Api
 │
 ├── Migrations
 ├── Properties
+├── docs
 ├── Program.cs
 └── appsettings.json
 ```
@@ -458,26 +466,58 @@ Syrla.Api
 
 # Próximas Evoluções
 
-Fase 3:
+## Fase 4 - Autorização e Segurança
 
-* Docker Compose
-* Oracle Cloud
-* Nginx
-* SSL
-* Deploy Automatizado
+* Endpoint GET /api/Auth/me
+* Claims JWT
+* Roles (User e Admin)
+* Rotas protegidas
+* Auditoria básica
 
-Fase 4:
+---
+
+## Fase 5 - Escalabilidade
 
 * Redis
 * RabbitMQ
+* Background Services
+* Cache
+* Health Checks Avançados
+
+---
+
+## Fase 6 - Segurança Corporativa
+
+* Refresh Tokens
+* Logs Estruturados
 * Observabilidade
+* Monitoramento
 
-Fase 5:
+---
 
-* Agentes IA
+## Fase 7 - Ecossistema de IA
+
+* Agentes Inteligentes
 * Memória Persistente
 * Integração com LLMs
-* Knowledge Base
+* Base de Conhecimento
 
-```
+---
+
+## Fase 8 - Plataforma Syrla
+
+* Painel Administrativo
+* Dashboard
+* Gestão de Usuários
+* Multiempresa
+
+---
+
+# Status Atual
+
+```txt
+Fase 1 ✅
+Fase 2 ✅
+Fase 3 ✅
+Fase 4 🚀
 ```
