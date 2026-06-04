@@ -48,15 +48,30 @@ public class AuthController : ControllerBase
 
         var email = User.FindFirst(ClaimTypes.Email)?.Value;
 
+        var role = User.FindFirst(ClaimTypes.Role)?.Value;
+
         return Ok(
             ApiResponse<object>.Ok(
                 new
                 {
                     Id = id,
                     Name = name,
-                    Email = email
+                    Email = email,
+                    Role = role
                 },
                 "Usuário autenticado."
+            )
+        );
+    }
+
+    [Authorize(Roles = "Admin")]
+    [HttpGet("admin")]
+    public IActionResult AdminOnly()
+    {
+        return Ok(
+            ApiResponse<string>.Ok(
+                "Acesso permitido para administradores.",
+                "Permissão validada com sucesso."
             )
         );
     }
