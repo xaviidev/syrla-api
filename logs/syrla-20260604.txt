@@ -1,0 +1,20 @@
+2026-06-04 23:15:32.509 -03:00 [INF] Iniciando Syrla API
+2026-06-04 23:15:33.149 -03:00 [INF] User profile is available. Using '/home/xavii/.aspnet/DataProtection-Keys' as key repository; keys will not be encrypted at rest.
+2026-06-04 23:15:33.592 -03:00 [INF] Now listening on: http://localhost:5197
+2026-06-04 23:15:33.599 -03:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-06-04 23:15:33.600 -03:00 [INF] Hosting environment: Development
+2026-06-04 23:15:33.601 -03:00 [INF] Content root path: /home/xavii/projects/api/Syrla.Api
+2026-06-04 23:28:13.422 -03:00 [INF] Application is shutting down...
+2026-06-04 23:28:18.888 -03:00 [INF] Iniciando Syrla API
+2026-06-04 23:28:19.433 -03:00 [INF] User profile is available. Using '/home/xavii/.aspnet/DataProtection-Keys' as key repository; keys will not be encrypted at rest.
+2026-06-04 23:28:19.792 -03:00 [INF] Now listening on: http://localhost:5197
+2026-06-04 23:28:19.796 -03:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-06-04 23:28:19.797 -03:00 [INF] Hosting environment: Development
+2026-06-04 23:28:19.797 -03:00 [INF] Content root path: /home/xavii/projects/api/Syrla.Api
+2026-06-04 23:35:25.613 -03:00 [INF] Application is shutting down...
+2026-06-04 23:35:33.480 -03:00 [INF] Iniciando Syrla API
+2026-06-04 23:35:34.106 -03:00 [INF] User profile is available. Using '/home/xavii/.aspnet/DataProtection-Keys' as key repository; keys will not be encrypted at rest.
+2026-06-04 23:35:34.646 -03:00 [INF] Now listening on: http://localhost:5197
+2026-06-04 23:35:34.650 -03:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-06-04 23:35:34.651 -03:00 [INF] Hosting environment: Development
+2026-06-04 23:35:34.651 -03:00 [INF] Content root path: /home/xavii/projects/api/Syrla.Api
