@@ -31,6 +31,10 @@ builder.Services.AddHealthChecks()
     .AddCheck(
         "api",
         () => HealthCheckResult.Healthy("API operacional")
+    )
+    .AddMySql(
+        builder.Configuration.GetConnectionString("DefaultConnection")!,
+        name: "database"
     );
 
 builder.Services.AddSwaggerGen(options =>
@@ -127,16 +131,18 @@ app.MapGet("/", () =>
     });
 });
 
-app.MapGet("/health", (HealthCheckService healthCheckService) =>
+app.MapGet("/health", async (HealthCheckService healthCheckService) =>
 {
+    var report = await healthCheckService.CheckHealthAsync();
+
     return Results.Ok(new
     {
-        Status = "Healthy",
+        Status = report.Status.ToString(),
         Timestamp = DateTime.UtcNow,
-        Checks = new
-        {
-            Api = "Healthy"
-        }
+        Checks = report.Entries.ToDictionary(
+            entry => entry.Key,
+            entry => entry.Value.Status.ToString()
+        )
     });
 });
 
