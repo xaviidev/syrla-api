@@ -2,6 +2,7 @@ using Syrla.Application.Interfaces;
 using Syrla.Api.Repositories.Interfaces;
 using Syrla.Application.DTOs;
 using Syrla.Domain.Entities;
+using Serilog;
 
 namespace Syrla.Application.Services;
 
@@ -21,6 +22,11 @@ public class UserService : IUserService
     public async Task<List<UserResponseDto>> GetUsersAsync()
     {
         var users = await _repository.GetAllAsync();
+
+        Log.Information(
+            "Consulta de usuários realizada. Quantidade: {Count}",
+            users.Count
+        );
 
         return users.Select(user => new UserResponseDto
         {
@@ -55,6 +61,13 @@ public class UserService : IUserService
 
         await _auditLogRepository.AddAsync(auditLog);
         await _auditLogRepository.SaveChangesAsync();
+
+        Log.Information(
+            "Usuário criado com sucesso. UserId: {UserId}, Email: {Email}, Role: {Role}",
+            user.Id,
+            user.Email,
+            user.Role
+        );
 
         return new UserResponseDto
         {
