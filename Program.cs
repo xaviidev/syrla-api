@@ -11,158 +11,182 @@ using Syrla.Application.Services;
 using Microsoft.EntityFrameworkCore;
 using Syrla.Infrastructure.Data;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Serilog;
 
-var builder = WebApplication.CreateBuilder(args);
-
-var jwtKey = builder.Configuration["JwtSettings:SecretKey"];
-
-var key = Encoding.UTF8.GetBytes(jwtKey!);
-
-// Add services to the container.
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddControllers();
-
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IAuditLogRepository, AuditLogRepository>();
-builder.Services.AddScoped<IAuthService, AuthService>();
-
-builder.Services.AddHealthChecks()
-    .AddCheck(
-        "api",
-        () => HealthCheckResult.Healthy("API operacional")
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.File(
+        "logs/syrla-.txt",
+        rollingInterval: RollingInterval.Day
     )
-    .AddMySql(
-        builder.Configuration.GetConnectionString("DefaultConnection")!,
-        name: "database"
+    .CreateLogger();
+
+try
+{
+    Log.Information("Iniciando Syrla API");
+
+    var builder = WebApplication.CreateBuilder(args);
+
+    builder.Host.UseSerilog();
+
+    var jwtKey = builder.Configuration["JwtSettings:SecretKey"];
+
+    var key = Encoding.UTF8.GetBytes(jwtKey!);
+
+    // Add services to the container.
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddControllers();
+
+    builder.Services.AddScoped<IUserService, UserService>();
+    builder.Services.AddScoped<IUserRepository, UserRepository>();
+    builder.Services.AddScoped<IAuditLogRepository, AuditLogRepository>();
+    builder.Services.AddScoped<IAuthService, AuthService>();
+
+    builder.Services.AddHealthChecks()
+        .AddCheck(
+            "api",
+            () => HealthCheckResult.Healthy("API operacional")
+        )
+        .AddMySql(
+            builder.Configuration.GetConnectionString("DefaultConnection")!,
+            name: "database"
+        );
+
+    builder.Services.AddSwaggerGen(options =>
+    {
+        options.SwaggerDoc("v1", new OpenApiInfo
+        {
+            Title = "Syrla API",
+            Version = "v1"
+        });
+
+        options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+        {
+            Name = "Authorization",
+            Type = SecuritySchemeType.Http,
+            Scheme = "bearer",
+            BearerFormat = "JWT",
+            In = ParameterLocation.Header,
+            Description = "Digite o token JWT"
+        });
+
+        options.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
+                    }
+                },
+                Array.Empty<string>()
+            }
+        });
+    });
+
+    builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(options =>
+        {
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+
+                IssuerSigningKey = new SymmetricSecurityKey(key)
+            };
+        });
+
+    builder.Services.AddAuthorization(options =>
+    {
+        options.AddPolicy("CanManageUsers", policy =>
+            policy.RequireRole("Admin"));
+    });
+
+    builder.Services.AddDbContext<AppDbContext>(options =>
+        options.UseMySql(
+            builder.Configuration.GetConnectionString("DefaultConnection"),
+            ServerVersion.AutoDetect(
+                builder.Configuration.GetConnectionString("DefaultConnection")
+            )
+        )
     );
 
-builder.Services.AddSwaggerGen(options =>
-{
-    options.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Title = "Syrla API",
-        Version = "v1"
-    });
+    var app = builder.Build();
 
-    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        Name = "Authorization",
-        Type = SecuritySchemeType.Http,
-        Scheme = "bearer",
-        BearerFormat = "JWT",
-        In = ParameterLocation.Header,
-        Description = "Digite o token JWT"
-    });
+    app.UseMiddleware<ExceptionMiddleware>();
 
-    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    app.UseSwagger();
+    app.UseSwaggerUI();
+
+    app.UseHttpsRedirection();
+
+    app.UseAuthentication();
+    app.UseAuthorization();
+
+    app.MapControllers();
+
+    var summaries = new[]
     {
+        "Freezing", "Bracing", "Chilly", "Cool", "Mild",
+        "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+    };
+
+    app.MapGet("/", () =>
+    {
+        return Results.Ok(new
         {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            Array.Empty<string>()
-        }
+            Application = "Syrla API",
+            Version = "1.0.0",
+            Status = "Online",
+            Environment = app.Environment.EnvironmentName
+        });
     });
-});
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
+    app.MapGet("/health", async (HealthCheckService healthCheckService) =>
     {
-        options.TokenValidationParameters = new TokenValidationParameters
+        var report = await healthCheckService.CheckHealthAsync();
+
+        return Results.Ok(new
         {
-            ValidateIssuer = false,
-            ValidateAudience = false,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-
-            IssuerSigningKey = new SymmetricSecurityKey(key)
-        };
+            Status = report.Status.ToString(),
+            Timestamp = DateTime.UtcNow,
+            Checks = report.Entries.ToDictionary(
+                entry => entry.Key,
+                entry => entry.Value.Status.ToString()
+            )
+        });
     });
 
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("CanManageUsers", policy =>
-        policy.RequireRole("Admin"));
-});
-
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseMySql(
-        builder.Configuration.GetConnectionString("DefaultConnection"),
-        ServerVersion.AutoDetect(
-            builder.Configuration.GetConnectionString("DefaultConnection")
-        )
-    )
-);
-
-var app = builder.Build();
-
-app.UseMiddleware<ExceptionMiddleware>();
-
-app.UseSwagger();
-app.UseSwaggerUI();
-
-app.UseHttpsRedirection();
-
-app.UseAuthentication();
-app.UseAuthorization();
-
-app.MapControllers();
-
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild",
-    "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/", () =>
-{
-    return Results.Ok(new
+    app.MapGet("/weatherforecast", () =>
     {
-        Application = "Syrla API",
-        Version = "1.0.0",
-        Status = "Online",
-        Environment = app.Environment.EnvironmentName
-    });
-});
+        var forecast = Enumerable.Range(1, 5)
+            .Select(index =>
+                new WeatherForecast(
+                    DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
+                    Random.Shared.Next(-20, 55),
+                    summaries[Random.Shared.Next(summaries.Length)]
+                ))
+            .ToArray();
 
-app.MapGet("/health", async (HealthCheckService healthCheckService) =>
+        return forecast;
+    })
+    .WithName("GetWeatherForecast")
+    .WithOpenApi();
+
+    app.Run();
+}
+catch (Exception ex)
 {
-    var report = await healthCheckService.CheckHealthAsync();
-
-    return Results.Ok(new
-    {
-        Status = report.Status.ToString(),
-        Timestamp = DateTime.UtcNow,
-        Checks = report.Entries.ToDictionary(
-            entry => entry.Key,
-            entry => entry.Value.Status.ToString()
-        )
-    });
-});
-
-app.MapGet("/weatherforecast", () =>
+    Log.Fatal(ex, "A aplicação foi encerrada inesperadamente");
+}
+finally
 {
-    var forecast = Enumerable.Range(1, 5)
-        .Select(index =>
-            new WeatherForecast(
-                DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                Random.Shared.Next(-20, 55),
-                summaries[Random.Shared.Next(summaries.Length)]
-            ))
-        .ToArray();
-
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
-
-app.Run();
+    Log.CloseAndFlush();
+}
 
 record WeatherForecast(
     DateOnly Date,
