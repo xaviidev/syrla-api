@@ -1,31 +1,37 @@
-# FASE 04 - AUTORIZAÇÃO E SEGURANÇA
+# FASE 04 - AUTORIZAÇÃO, SEGURANÇA E AUDITORIA
 
 ## Status
 
-Em Planejamento 🚀
+Concluída ✅
+
+Versão:
+
+```txt
+v0.2.0
+```
 
 ---
 
 # Objetivo
 
-Fortalecer os mecanismos de autenticação, autorização e segurança da plataforma Syrla.
+Fortalecer os mecanismos de autenticação, autorização e auditoria da plataforma Syrla.
 
-Após a conclusão desta fase, a aplicação deverá ser capaz de identificar usuários autenticados, controlar permissões de acesso e preparar a base para ambientes corporativos.
+Ao final desta fase, a aplicação passa a identificar usuários autenticados, controlar permissões de acesso e registrar eventos importantes para rastreabilidade e segurança.
 
 ---
 
 # Visão Geral
 
-Atualmente a Syrla já possui:
+Ao iniciar esta fase, a Syrla já possuía:
 
 * Cadastro de usuários
 * Login
 * JWT Authentication
 * BCrypt Password Hashing
-* Banco de dados em nuvem
-* API em produção
+* Banco de dados MySQL
+* API publicada em produção
 
-O próximo passo é evoluir do conceito de autenticação para autorização.
+O objetivo foi evoluir da autenticação simples para um modelo completo de autorização e auditoria.
 
 ---
 
@@ -33,7 +39,7 @@ O próximo passo é evoluir do conceito de autenticação para autorização.
 
 ## Objetivo
 
-Permitir que a API identifique o usuário que realizou o login.
+Permitir que a API identifique o usuário autenticado através do JWT.
 
 ---
 
@@ -45,15 +51,16 @@ GET /api/Auth/me
 
 ---
 
-## Resultado Esperado
+## Resultado Implementado
 
-Retornar:
+Retorna:
 
 * Id
 * Nome
 * Email
+* Role
 
-Baseado nas informações contidas no JWT.
+Extraídos diretamente das Claims presentes no token JWT.
 
 ---
 
@@ -61,7 +68,7 @@ Baseado nas informações contidas no JWT.
 
 ## Objetivo
 
-Impedir acesso não autorizado a recursos privados.
+Restringir acesso a recursos privados da API.
 
 ---
 
@@ -78,22 +85,22 @@ Utilização do atributo:
 ## Aplicações
 
 * Listagem de usuários
-* Perfil do usuário
+* Perfil autenticado
 * Recursos administrativos
 
 ---
 
-# Etapa 3 - Claims
+# Etapa 3 - Claims JWT
 
 ## Objetivo
 
-Armazenar informações relevantes dentro do token JWT.
+Adicionar informações relevantes ao token JWT.
 
 ---
 
-## Claims Planejadas
+## Claims Implementadas
 
-* User Id
+* NameIdentifier
 * Name
 * Email
 * Role
@@ -104,7 +111,7 @@ Armazenar informações relevantes dentro do token JWT.
 
 * Menos consultas ao banco
 * Identificação rápida do usuário
-* Controle de acesso
+* Controle de acesso baseado em Claims
 
 ---
 
@@ -112,11 +119,11 @@ Armazenar informações relevantes dentro do token JWT.
 
 ## Objetivo
 
-Criar perfis de acesso.
+Criar níveis de acesso para usuários.
 
 ---
 
-## Perfis Iniciais
+## Roles Implementadas
 
 ### User
 
@@ -126,102 +133,263 @@ Permissões básicas.
 
 ### Admin
 
-Acesso administrativo.
+Permissões administrativas.
 
 ---
 
-## Futuro
+## Implementação
 
-### Manager
+Campo adicionado à entidade:
 
-Gerenciamento operacional.
+```csharp
+public string Role { get; set; } = "User";
+```
 
 ---
 
-# Etapa 5 - Segurança
+# Etapa 5 - Policies
 
 ## Objetivo
 
-Aprimorar a proteção da aplicação.
+Permitir controle de acesso avançado.
 
 ---
 
-## Melhorias Planejadas
+## Policy Implementada
 
-* Secrets via Variáveis de Ambiente
-* Rotação de Chaves JWT
-* Políticas de Autorização
-* Validações adicionais
+```csharp
+CanManageUsers
+```
 
 ---
 
-# Etapa 6 - Auditoria
+## Configuração
+
+```csharp
+options.AddPolicy(
+    "CanManageUsers",
+    policy => policy.RequireRole("Admin")
+);
+```
+
+---
+
+## Benefícios
+
+* Controle centralizado
+* Facilidade de expansão futura
+* Base para múltiplos perfis
+
+---
+
+# Etapa 6 - Endpoint Administrativo
 
 ## Objetivo
 
-Registrar eventos relevantes da aplicação.
+Validar permissões administrativas.
 
 ---
 
-## Eventos
+## Endpoint
 
-* Login
-* Logout
-* Criação de usuários
-* Alterações críticas
+```http
+GET /api/Auth/admin
+```
 
 ---
 
-# Entregas Esperadas
+## Proteção
+
+```csharp
+[Authorize(Roles = "Admin")]
+```
+
+---
+
+## Resultado
+
+Apenas usuários com Role Admin possuem acesso.
+
+Usuários sem permissão recebem:
+
+```http
+403 Forbidden
+```
+
+---
+
+# Etapa 7 - Auditoria
+
+## Objetivo
+
+Registrar ações importantes da aplicação.
+
+---
+
+## Entidade
+
+```txt
+AuditLog
+```
+
+---
+
+## Estrutura
+
+* Id
+* UserId
+* Action
+* CreatedAt
+
+---
+
+## Tabela
+
+```txt
+AuditLogs
+```
+
+---
+
+## Eventos Implementados
+
+### Login realizado
+
+Registrado automaticamente após autenticação bem-sucedida.
+
+Exemplo:
+
+```txt
+Login realizado
+```
+
+---
+
+### Usuário criado
+
+Registrado automaticamente após criação de novos usuários.
+
+Exemplo:
+
+```txt
+Usuário criado
+```
+
+---
+
+## Benefícios
+
+* Rastreabilidade
+* Auditoria básica
+* Histórico de ações
+* Base para compliance futuro
+
+---
+
+# Segurança Implementada
+
+## JWT
+
+Responsável por:
+
+* Autenticação
+* Controle de acesso
+
+---
+
+## BCrypt
+
+Responsável por:
+
+* Hash de senhas
+
+---
+
+## Middleware Global
+
+Responsável por:
+
+* Tratamento centralizado de exceções
+* Padronização de erros
+* Proteção contra exposição de detalhes internos
+
+---
+
+# Entregas Concluídas
 
 ## Funcionalidades
 
-* Endpoint /me
+* Endpoint /api/Auth/me
+* Endpoint /api/Auth/admin
 * Rotas protegidas
-* Claims
+* Claims JWT
 * Roles
-* Auditoria básica
+* Policies
+* Auditoria de Login
+* Auditoria de Criação de Usuário
 
 ---
 
 ## Segurança
 
-* Controle de acesso
-* Melhor gerenciamento de segredos
-* Base preparada para ambientes corporativos
+* Controle de acesso baseado em Role
+* JWT Authentication
+* BCrypt Password Hashing
+* Middleware Global de Exceções
 
 ---
 
-# Critério de Conclusão
+## Banco de Dados
 
-A Fase 04 será considerada concluída quando:
+* Campo Role em Users
+* Tabela AuditLogs
+* Persistência de eventos auditáveis
 
-* Usuário autenticado puder ser identificado
-* Rotas protegidas estiverem funcionando
-* Roles estiverem implementadas
-* Claims estiverem presentes no JWT
-* Auditoria básica estiver operacional
+---
+
+# Resultado Final
+
+A Syrla agora possui:
+
+* Autenticação JWT
+* Controle de acesso por Roles
+* Policies de autorização
+* Identificação do usuário autenticado
+* Auditoria básica operacional
+* Base preparada para evolução corporativa
+
+---
+
+# Próximas Evoluções
+
+## Melhorias Futuras
+
+* Auditoria de acesso administrativo
+* Auditoria de alterações de usuários
+* Auditoria de exclusões
+* Refresh Tokens
+* Rotação de Segredos JWT
+* Variáveis de Ambiente para todos os segredos
 
 ---
 
 # Próxima Fase
 
-## Fase 05 - Escalabilidade
+## Fase 05 - Escalabilidade e Observabilidade
 
-Objetivos futuros:
+Objetivos:
 
 * Redis
 * RabbitMQ
 * Background Services
-* Cache
+* Cache Distribuído
 * Health Checks Avançados
+* Logs Estruturados
+* Observabilidade
+* Monitoramento
 
 ---
 
-# Versão
+# Conclusão
 
-Planejada para:
-
-```txt
-v0.2.0
-```
+A Fase 04 foi concluída com sucesso, adicionando autenticação avançada, autorização baseada em papéis e auditoria básica, elevando a Syrla para um padrão compatível com aplicações corporativas modernas.
