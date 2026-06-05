@@ -1,0 +1,28 @@
+2026-06-05 00:01:21.423 -03:00 [INF] Application is shutting down...
+2026-06-05 00:01:36.999 -03:00 [INF] Iniciando Syrla API
+2026-06-05 00:01:37.575 -03:00 [INF] User profile is available. Using '/home/xavii/.aspnet/DataProtection-Keys' as key repository; keys will not be encrypted at rest.
+2026-06-05 00:01:37.853 -03:00 [INF] Now listening on: http://localhost:5197
+2026-06-05 00:01:37.858 -03:00 [INF] Application started. Press Ctrl+C to shut down.
+2026-06-05 00:01:37.861 -03:00 [INF] Hosting environment: Development
+2026-06-05 00:01:37.861 -03:00 [INF] Content root path: /home/xavii/projects/api/Syrla.Api
+2026-06-05 00:10:38.277 -03:00 [INF] Request starting HTTP/1.1 POST http://localhost:5197/api/User - application/json 92
+2026-06-05 00:10:38.353 -03:00 [WRN] Failed to determine the https port for redirect.
+2026-06-05 00:10:38.390 -03:00 [INF] Executing endpoint 'Syrla.API.Controllers.UserController.CreateUser (Syrla.Api)'
+2026-06-05 00:10:38.428 -03:00 [INF] Route matched with {action = "CreateUser", controller = "User"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] CreateUser(Syrla.Application.DTOs.CreateUserDto) on controller Syrla.API.Controllers.UserController (Syrla.Api).
+2026-06-05 00:10:45.059 -03:00 [INF] Executed DbCommand (289ms) [Parameters=[@p0='?' (Size = 4000), @p1='?' (Size = 4000), @p2='?' (Size = 4000), @p3='?' (Size = 4000)], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO `Users` (`Email`, `Name`, `PasswordHash`, `Role`)
+VALUES (@p0, @p1, @p2, @p3);
+SELECT `Id`
+FROM `Users`
+WHERE ROW_COUNT() = 1 AND `Id` = LAST_INSERT_ID();
+2026-06-05 00:10:46.142 -03:00 [INF] Executed DbCommand (243ms) [Parameters=[@p0='?' (Size = 4000), @p1='?' (DbType = DateTime), @p2='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO `AuditLogs` (`Action`, `CreatedAt`, `UserId`)
+VALUES (@p0, @p1, @p2);
+SELECT `Id`
+FROM `AuditLogs`
+WHERE ROW_COUNT() = 1 AND `Id` = LAST_INSERT_ID();
+2026-06-05 00:10:46.388 -03:00 [INF] Usuário criado com sucesso. UserId: 10, Email: teste.local.log@syrla.com, Role: User
+2026-06-05 00:10:46.400 -03:00 [INF] Executing OkObjectResult, writing value of type 'Syrla.Application.Common.ApiResponse`1[[System.Object, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2026-06-05 00:10:46.444 -03:00 [INF] Executed action Syrla.API.Controllers.UserController.CreateUser (Syrla.Api) in 8007.8029ms
+2026-06-05 00:10:46.448 -03:00 [INF] Executed endpoint 'Syrla.API.Controllers.UserController.CreateUser (Syrla.Api)'
+2026-06-05 00:10:46.481 -03:00 [INF] Request finished HTTP/1.1 POST http://localhost:5197/api/User - 200 null application/json; charset=utf-8 8196.7035ms
