@@ -10,6 +10,7 @@ using System.Text;
 using Syrla.Application.Services;
 using Microsoft.EntityFrameworkCore;
 using Syrla.Infrastructure.Data;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +26,12 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IAuditLogRepository, AuditLogRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+
+builder.Services.AddHealthChecks()
+    .AddCheck(
+        "api",
+        () => HealthCheckResult.Healthy("API operacional")
+    );
 
 builder.Services.AddSwaggerGen(options =>
 {
@@ -93,8 +100,6 @@ var app = builder.Build();
 
 app.UseMiddleware<ExceptionMiddleware>();
 
-// Configure the HTTP request pipeline.
-
 app.UseSwagger();
 app.UseSwaggerUI();
 
@@ -122,12 +127,16 @@ app.MapGet("/", () =>
     });
 });
 
-app.MapGet("/health", () =>
+app.MapGet("/health", (HealthCheckService healthCheckService) =>
 {
     return Results.Ok(new
     {
         Status = "Healthy",
-        Timestamp = DateTime.UtcNow
+        Timestamp = DateTime.UtcNow,
+        Checks = new
+        {
+            Api = "Healthy"
+        }
     });
 });
 
