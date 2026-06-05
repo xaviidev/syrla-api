@@ -8,10 +8,14 @@ namespace Syrla.Application.Services;
 public class UserService : IUserService
 {
     private readonly IUserRepository _repository;
+    private readonly IAuditLogRepository _auditLogRepository;
 
-    public UserService(IUserRepository repository)
+    public UserService(
+        IUserRepository repository,
+        IAuditLogRepository auditLogRepository)
     {
         _repository = repository;
+        _auditLogRepository = auditLogRepository;
     }
 
     public async Task<List<UserResponseDto>> GetUsersAsync()
@@ -41,6 +45,16 @@ public class UserService : IUserService
 
         await _repository.AddAsync(user);
         await _repository.SaveChangesAsync();
+
+        var auditLog = new AuditLog
+        {
+            UserId = user.Id,
+            Action = "Usuário criado",
+            CreatedAt = DateTime.UtcNow
+        };
+
+        await _auditLogRepository.AddAsync(auditLog);
+        await _auditLogRepository.SaveChangesAsync();
 
         return new UserResponseDto
         {
