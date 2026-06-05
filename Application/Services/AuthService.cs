@@ -6,20 +6,24 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Syrla.Infrastructure.Authentication;
 using Syrla.Application.DTOs;
+using Syrla.Domain.Entities;
 
 namespace Syrla.Application.Services;
 
 public class AuthService : IAuthService
 {
     private readonly IUserRepository _repository;
+    private readonly IAuditLogRepository _auditLogRepository;
     private readonly IConfiguration _configuration;
 
     public AuthService(
         IUserRepository repository,
+        IAuditLogRepository auditLogRepository,
         IConfiguration configuration
     )
     {
         _repository = repository;
+        _auditLogRepository = auditLogRepository;
         _configuration = configuration;
     }
 
@@ -37,6 +41,16 @@ public class AuthService : IAuthService
 
         if (!passwordValid)
             return null;
+
+        var auditLog = new AuditLog
+        {
+            UserId = user.Id,
+            Action = "Login realizado",
+            CreatedAt = DateTime.UtcNow
+        };
+
+        await _auditLogRepository.AddAsync(auditLog);
+        await _auditLogRepository.SaveChangesAsync();
 
         var jwtSettings = _configuration
             .GetSection("JwtSettings")

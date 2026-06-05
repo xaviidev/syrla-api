@@ -64,7 +64,7 @@ public class AuthController : ControllerBase
         );
     }
 
-    [Authorize(Roles = "Admin")]
+    [Authorize(Policy = "CanManageUsers")]
     [HttpGet("admin")]
     public IActionResult AdminOnly()
     {
