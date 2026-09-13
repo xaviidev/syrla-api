@@ -1,3 +1,5 @@
+using Syrla.Infrastructure.Cache;
+using Syrla.Infrastructure.Data;
 using Syrla.API.Middlewares;
 using Syrla.Api.Repositories;
 using Syrla.Api.Repositories.Interfaces;
@@ -9,9 +11,9 @@ using System.Text;
 
 using Syrla.Application.Services;
 using Microsoft.EntityFrameworkCore;
-using Syrla.Infrastructure.Data;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Serilog;
+using StackExchange.Redis;
 
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
@@ -41,6 +43,38 @@ try
     builder.Services.AddScoped<IUserRepository, UserRepository>();
     builder.Services.AddScoped<IAuditLogRepository, AuditLogRepository>();
     builder.Services.AddScoped<IAuthService, AuthService>();
+
+    // Redis
+    var redisHost = builder.Configuration["REDIS_HOST"];
+    var redisPassword = builder.Configuration["REDIS_PASSWORD"];
+
+    if (string.IsNullOrWhiteSpace(redisHost))
+    {
+        throw new InvalidOperationException(
+            "A variável de ambiente REDIS_HOST não foi configurada."
+        );
+    }
+
+    if (string.IsNullOrWhiteSpace(redisPassword))
+    {
+        throw new InvalidOperationException(
+            "A variável de ambiente REDIS_PASSWORD não foi configurada."
+        );
+    }
+
+    var redisOptions = new ConfigurationOptions
+    {
+        AbortOnConnectFail = false,
+        Ssl = true,
+        Password = redisPassword
+    };
+
+    redisOptions.EndPoints.Add(redisHost, 6379);
+
+    var redis = ConnectionMultiplexer.Connect(redisOptions);
+
+    builder.Services.AddSingleton<IConnectionMultiplexer>(redis);
+    builder.Services.AddSingleton<ICacheService, RedisCacheService>();
 
     builder.Services.AddHealthChecks()
         .AddCheck(
