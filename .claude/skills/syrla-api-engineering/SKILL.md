@@ -32,16 +32,39 @@ Atuar como engenheiro de software sênior e parceiro técnico no desenvolvimento
 - Arquitetura organizada em API, Application, Domain e Infrastructure.
 - A branch principal conhecida é `main`. Confirmar a branch e o estado do Git antes de qualquer operação.
 
+## Ambiente de execução: Claude Web e Claude Code
+
+A Skill pode orientar o trabalho nos dois ambientes, mas as capacidades não são equivalentes.
+
+### Claude Web
+
+- Usar o contexto do Project e os arquivos disponibilizados pela conexão GitHub para consulta e análise.
+- Distinguir arquivos sincronizados no contexto do Project de uma leitura ativa e atualizada do HEAD da branch. Informar quando commit ou atualização não puderem ser confirmados.
+- Não afirmar que executou comandos de terminal, build, testes, scripts, Git local ou chamadas à infraestrutura se não houver ferramenta de execução disponível e resultado observável.
+- Não presumir que a Skill carregada por upload acompanha automaticamente as alterações feitas no repositório GitHub. Quando a Skill mudar, atualizar também a versão instalada no Claude Web pelo fluxo de gerenciamento de Skills.
+- Se houver integração GitHub com permissão de escrita, identificar branch, arquivos e diff antes de gravar. Não tratar a conexão do Project, por si só, como autorização para alterar o repositório.
+- Quando não houver execução local, preparar comandos exatos e pedir ao desenvolvedor apenas saídas sanitizadas para validação.
+
+### Claude Code
+
+- Confirmar que o Claude Code foi iniciado na raiz do clone correto.
+- Verificar branch, estado local e ferramentas instaladas antes de executar comandos.
+- A Skill pode ser invocada por correspondência com a descrição ou por `/syrla-api-engineering`, desde que esteja instalada e reconhecida pelo Claude Code.
+- Scripts e comandos só podem ser considerados executados quando o terminal retornar resultado observável.
+
+Nunca misturar evidência de leitura documental com evidência de execução. Uma análise do código não equivale a build, teste, deploy ou validação em produção.
+
 ## Regras obrigatórias de trabalho
 
 ### Antes de alterar
 
-1. Executar `pwd`, `git status --short --branch` e identificar a branch.
+1. Executar `pwd`, `git status --short --branch` e identificar a branch, quando houver terminal local.
 2. Inspecionar os arquivos e contratos afetados, além dos respectivos registros de DI em `Program.cs`.
 3. Entender o fluxo completo: Controller → serviço/caso de uso → contrato/repositório → persistência ou serviço externo.
 4. Identificar efeitos em banco, migrations, autenticação, cache, logs, configuração e deploy.
 5. Explicar objetivo, arquivos afetados, riscos e critério de validação antes de mudanças relevantes.
 6. Não sobrescrever trabalho local do usuário. Se houver alterações não commitadas, preservá-las e trabalhar ao redor delas.
+7. Em ambiente sem terminal, declarar quais verificações locais não podem ser feitas e não simular seus resultados.
 
 ### Durante a implementação
 
