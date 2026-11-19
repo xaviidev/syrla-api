@@ -6,12 +6,31 @@
 - Entender antes de alterar.
 - Mudança mínima e justificável.
 - Arquivos completos ao propor substituição.
-- Build/teste antes de concluir.
+- Build/teste antes de concluir, quando o ambiente permitir.
 - Commit e push somente quando solicitados.
+- Não confundir análise documental com execução ou validação técnica.
+
+## Diferenças entre ambientes
+
+### Claude Web
+
+- Consultar os arquivos efetivamente disponibilizados no Project e registrar limitações de atualização/sincronização.
+- Não afirmar que executou terminal, Bash, Git local, restore, build, testes ou scripts sem ferramenta de execução e saída observável.
+- Quando não houver ambiente de execução, fornecer o comando exato para o desenvolvedor executar em ambiente autorizado e solicitar somente a saída sanitizada.
+- Se houver ferramenta de edição GitHub, conferir branch, conteúdo atual e diff antes de gravar; não presumir que a conexão de leitura do Project permite escrita.
+- A Skill instalada por upload no Claude Web precisa ser atualizada separadamente quando o arquivo `SKILL.md` mudar no GitHub.
+
+### Claude Code
+
+- Confirmar que o Claude Code foi iniciado na raiz do clone correto.
+- Verificar branch, estado local e ferramentas instaladas antes de executar comandos.
+- Não sobrescrever alterações locais do usuário.
+- Executar comandos apenas após entender seu escopo e efeitos.
 
 ## Início de sessão
 
-Executar:
+Quando houver terminal local, executar:
+
 ```bash
 pwd
 git status --short --branch
@@ -23,16 +42,18 @@ Confirmar repositório, branch e alterações locais. Nunca descartar alteraçõ
 ## Inspeção
 
 Para localizar arquivos:
+
 ```bash
 find . -maxdepth 4 -type f | sort
 ```
 
 Para pesquisar símbolos:
+
 ```bash
 grep -RIn --exclude-dir=.git --exclude-dir=bin --exclude-dir=obj "NomeDoSimbolo" .
 ```
 
-Para ler arquivos, usar ferramentas disponíveis no ambiente e inspecionar os contratos e dependências relacionados.
+Ler os arquivos completos relevantes e inspecionar contratos, dependências, chamadas e registros de DI relacionados.
 
 ## Implementação
 
@@ -41,10 +62,12 @@ Para ler arquivos, usar ferramentas disponíveis no ambiente e inspecionar os co
 3. Ler os arquivos completos relevantes.
 4. Fazer uma alteração coerente e pequena.
 5. Revisar o diff.
-6. Compilar e testar.
-7. Reportar limitações e pendências.
+6. Compilar e testar, quando houver ambiente local.
+7. Reportar limitações e pendências sem declarar validações não executadas.
 
-## Validação básica
+## Validação local
+
+Na raiz do repositório:
 
 ```bash
 dotnet restore
@@ -54,11 +77,12 @@ git diff --check
 git status --short --branch
 ```
 
-Executar `dotnet test` se houver solução/projeto de testes. Se não houver, informar que nenhum teste foi executado por ausência de projeto descoberto.
+Executar testes quando houver solução/projeto de testes. Se nenhum projeto de teste for identificado, informar isso claramente; não declarar cobertura inexistente. O script `scripts/validate-project.sh` automatiza uma verificação básica, mas sua saída deve ser examinada e não substitui testes de integração, segurança ou staging.
 
 ## Git
 
 Antes de commit:
+
 ```bash
 git diff --stat
 git diff
@@ -67,7 +91,7 @@ git status
 
 Nunca usar `git add .` sem revisar o que será incluído. Preferir adicionar caminhos específicos. Não commitar logs, secrets, arquivos temporários, artefatos de build ou dados locais.
 
-Commits devem descrever a mudança de forma objetiva. Push apenas após solicitação do responsável.
+Commits devem descrever a mudança de forma objetiva. Commit, push, PR, merge e publicação são operações distintas; não presumir autorização para uma etapa porque outra foi autorizada.
 
 ## Diagnóstico de produção
 
