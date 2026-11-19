@@ -3,33 +3,27 @@
 ## Identificação
 
 - Repositório: `xaviidev/syrla-api`
-- Branch principal esperada: `main`
-- Framework alvo declarado no projeto: `net8.0`
+- Branch principal: `main`
+- Framework alvo declarado: `net8.0`
 - Linguagem: C#
 - Projeto web: ASP.NET Core
 - Arquivo de entrada: `Program.cs`
 
-## Evidências consultadas na auditoria inicial
+## Base de evidência desta referência
 
-A primeira versão desta referência foi elaborada a partir dos arquivos da branch `main` consultados durante a criação da Skill. Revalidar estes dados contra a branch ativa antes de usá-los em uma decisão técnica.
+A auditoria documental desta Skill foi inicialmente baseada no commit da `main`:
 
-Arquivos inspecionados:
+`80b4e0f5804cea30a34f00784a32d754656d2501`
+
+A branch `docs/claude-syrla-api-skill-v1` foi criada a partir dessa base e, no momento da revisão, contém mudanças documentais e tooling da Skill, sem alteração do código da API. Revalidar o HEAD da branch antes de usar este retrato em uma decisão técnica.
+
+Arquivos de código consultados na base:
 - `Program.cs`
 - `Syrla.Api.csproj`
-- `API/Controllers/AuthController.cs`
-- `API/Controllers/UserController.cs`
-- `Application/Services/AuthService.cs`
-- `Application/Services/UserService.cs`
-- `Application/Interfaces/IAuthService.cs`
-- `Application/Interfaces/IUserService.cs`
-- `Domain/Entities/User.cs`
-- `Domain/Entities/AuditLog.cs`
-- `Infrastructure/Data/AppDbContext.cs`
-- `Infrastructure/Cache/ICacheService.cs`
-- `Infrastructure/Cache/RedisCacheService.cs`
-- documentos em `docs/` relacionados a arquitetura, decisões, deploy, Fase 3, Fase 4, roadmap e troubleshooting.
+- `Dockerfile`
+- Controllers, serviços, entidades, DbContext, cache e migrations descritos abaixo, conforme a auditoria inicial.
 
-## Implementações observadas no código
+## Implementações observadas na auditoria inicial
 
 - Controllers de autenticação e usuários.
 - Login por e-mail e senha.
@@ -47,11 +41,32 @@ Arquivos inspecionados:
 - Swagger com definição de segurança Bearer.
 - Middleware global de exceções.
 
-## Configuração de Redis observada
+Esses itens são evidências da auditoria de código/documentação, não prova de deploy ou funcionamento atual em produção.
 
-O `Program.cs` lê as chaves de configuração `REDIS_HOST` e `REDIS_PASSWORD`. Ambas são obrigatórias na inicialização atual; a aplicação lança `InvalidOperationException` se qualquer uma estiver ausente. A conexão usa TLS e porta 6379.
+## Configuração observada no Program.cs
+
+- JWT: lê `JwtSettings:SecretKey`; valida lifetime e signing key; issuer e audience estão configurados como não validados.
+- Redis: lê `REDIS_HOST` e `REDIS_PASSWORD`; ambas são obrigatórias na inicialização; usa TLS e porta 6379.
+- Health checks: registra API e MySQL; Redis não aparece no trecho consultado.
+- Serilog: escreve em Console e em arquivos diários sob `logs/syrla-.txt`.
+- Swagger: registra esquema Bearer.
+- EF Core: usa `AppDbContext` e MySQL.
 
 Não copiar valores reais de credenciais para esta referência.
+
+## Dependências observadas no Syrla.Api.csproj
+
+O projeto declara `net8.0`. Entre as versões consultadas:
+- `Microsoft.AspNetCore.Authentication.JwtBearer` 8.0.0
+- `Microsoft.AspNetCore.OpenApi` 8.0.27
+- `Microsoft.EntityFrameworkCore` 9.0.0
+- `Microsoft.EntityFrameworkCore.Design` 9.0.0
+- `Pomelo.EntityFrameworkCore.MySql` 9.0.0
+- `AspNetCore.HealthChecks.MySql` 9.0.0
+- `Serilog.AspNetCore` 10.0.0
+- `StackExchange.Redis` 3.2.0
+
+A presença de versões principais diferentes do target framework é um ponto de verificação de compatibilidade, não prova isolada de incompatibilidade. Confirmar frameworks-alvo dos pacotes, restore e build com o SDK adequado antes de atualizar ou rebaixar dependências.
 
 ## Divergências e riscos documentais identificados
 
@@ -62,13 +77,13 @@ A documentação antiga de deploy listava tabelas incompletas. O histórico de d
 ## Observações técnicas que exigem revisão
 
 1. `POST /api/User` não possui atributo `[Authorize]` no controller consultado. Confirmar se cadastro público é intencional e quais controles antiabuso existem.
-2. O JWT é configurado com validação de lifetime e signing key; issuer e audience não são validados no trecho atual. Não alterar sem revisar a estratégia de tokens.
+2. O JWT valida lifetime e signing key, mas issuer e audience não são validados. Não alterar sem revisar a estratégia de tokens.
 3. O health check registra API e MySQL, mas não Redis.
 4. Redis é conectado de forma síncrona durante a inicialização e exige variáveis de ambiente mesmo em ambiente local.
-5. O projeto declara `net8.0`, enquanto algumas referências NuGet consultadas estão na linha 9 ou 10. Verificar compatibilidade e matriz suportada antes de atualizar ou rebaixar pacotes.
+5. O projeto declara `net8.0` enquanto algumas dependências consultadas têm versões principais 9 ou 10. Verificar compatibilidade com restore/build; não presumir incompatibilidade apenas pelo número da versão.
 6. Não foi confirmado, na auditoria inicial, um projeto de testes automatizados na árvore. Verificar a árvore atual e não presumir que xUnit/Moq/FluentAssertions estejam efetivamente configurados.
-7. Os documentos existentes mencionam CI/CD e deploy automático; revalidar workflows e configuração de hospedagem antes de descrever como estado atual.
+7. O Dockerfile consultado usa imagens ASP.NET e SDK 8.0. Revalidar workflows, configuração de hospedagem e deploy antes de descrever como estado atual.
 
 ## Como usar esta referência
 
-Esta página é um retrato inicial, não um substituto da inspeção do código. Atualizá-la quando as evidências mudarem. Marcar qualquer informação não verificada como pendente de confirmação.
+Esta página é um retrato com base de evidência identificada, não um substituto da inspeção do código. Atualizá-la quando as evidências mudarem. Marcar qualquer informação não verificada como pendente de confirmação.
