@@ -7,7 +7,8 @@
 - Docker: imagem da aplicação.
 - Railway: MySQL.
 - Upstash: Redis.
-- Ubuntu 26.04 LTS no notebook de desenvolvimento do responsável pelo projeto, conforme histórico de trabalho.
+
+Os serviços acima constam na documentação/histórico do projeto. Confirmar estado, plano, URLs e recursos ativos antes de qualquer operação; não presumir que a configuração continua vigente.
 
 ## Dockerfile observado
 
