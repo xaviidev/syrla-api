@@ -12,37 +12,72 @@ if ! command -v dotnet >/dev/null 2>&1; then
   exit 1
 fi
 
-PROJECT_FILE="$(find . -maxdepth 4 -name '*.csproj' -not -path '*/bin/*' -not -path '*/obj/*' -print -quit)"
-if [[ -z "$PROJECT_FILE" ]]; then
+mapfile -t PROJECT_FILES < <(
+  find . -maxdepth 6 -type f -name '*.csproj' \
+    -not -path '*/bin/*' -not -path '*/obj/*' \
+    | sort
+)
+
+if (( ${#PROJECT_FILES[@]} == 0 )); then
   echo "ERRO: nenhum arquivo .csproj encontrado." >&2
   exit 1
 fi
 
-echo
-echo "Projeto encontrado: $PROJECT_FILE"
+mapfile -t SOLUTION_FILES < <(
+  find . -maxdepth 5 -type f \( -name '*.sln' -o -name '*.slnx' \) \
+    -not -path '*/bin/*' -not -path '*/obj/*' \
+    | sort
+)
+
+mapfile -t TEST_PROJECTS < <(
+  for project in "${PROJECT_FILES[@]}"; do
+    if grep -Eiq '<IsTestProject>[[:space:]]*true[[:space:]]*</IsTestProject>|Microsoft\.NET\.Test\.Sdk' "$project"; then
+      printf '%s\n' "$project"
+    fi
+  done
+)
 
 echo
-echo "== dotnet --info (resumo) =="
+echo "Projetos encontrados: ${#PROJECT_FILES[@]}"
+printf ' - %s\n' "${PROJECT_FILES[@]}"
+
+echo
+echo "== .NET SDK =="
 dotnet --version
 
-echo
-echo "== Restore =="
-dotnet restore "$PROJECT_FILE"
+if (( ${#SOLUTION_FILES[@]} > 0 )); then
+  for solution in "${SOLUTION_FILES[@]}"; do
+    echo
+    echo "== Restore: $solution =="
+    dotnet restore "$solution"
 
-echo
-echo "== Build =="
-dotnet build "$PROJECT_FILE" --no-restore
+    echo
+    echo "== Build: $solution =="
+    dotnet build "$solution" --no-restore
+  done
+else
+  echo
+  echo "AVISO: nenhuma solução .sln/.slnx encontrada; restaurando e compilando cada projeto."
+
+  for project in "${PROJECT_FILES[@]}"; do
+    echo
+    echo "== Restore: $project =="
+    dotnet restore "$project"
+  done
+
+  for project in "${PROJECT_FILES[@]}"; do
+    echo
+    echo "== Build: $project =="
+    dotnet build "$project" --no-restore
+  done
+fi
 
 echo
 echo "== Testes =="
-mapfile -t TEST_PROJECTS < <(
-  find . -maxdepth 5 -name '*.csproj' \
-    -not -path '*/bin/*' -not -path '*/obj/*' \
-    | grep -Ei '(test|tests|spec)' || true
-)
 
 if (( ${#TEST_PROJECTS[@]} == 0 )); then
-  echo "AVISO: nenhum projeto de testes identificado por nome. Testes não executados."
+  echo "AVISO: nenhum projeto de testes identificado por IsTestProject ou Microsoft.NET.Test.Sdk."
+  echo "Testes não executados; isso não comprova ausência de testes no repositório."
 else
   for test_project in "${TEST_PROJECTS[@]}"; do
     echo "Executando: $test_project"
@@ -52,11 +87,12 @@ fi
 
 echo
 echo "== Verificação Git =="
+
 if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
   git diff --check
   git status --short --branch
 else
-  echo "AVISO: diretório não está em um repositório Git."
+  echo "AVISO: diretório não está em um repositório Git; verificação Git ignorada."
 fi
 
 echo
